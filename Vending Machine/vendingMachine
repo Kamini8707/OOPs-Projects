@@ -1,0 +1,370 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Coin enum
+enum class Coin {
+    ONE = 1,
+    TWO = 2,
+    FIVE = 5,
+    TEN = 10,
+    TWENTY = 20,
+    FIFTY = 50,
+    HUNDRED = 100
+};
+
+// Function to get the string representation of Coin
+string getCoinString(Coin coin) {
+    switch (coin) {
+        case Coin::ONE: return "ONE";
+        case Coin::TWO: return "TWO";
+        case Coin::FIVE: return "FIVE";
+        case Coin::TEN: return "TEN";
+        case Coin::TWENTY: return "TWENTY";
+        case Coin::FIFTY: return "FIFTY";
+        case Coin::HUNDRED: return "HUNDRED";
+        default: return "UNKNOWN";
+    }
+}
+
+// ItemType enum
+enum class ItemType {
+    OREO,
+    JUICE,
+    COKE,
+    SODA,
+    CHIPS,
+    CHOCOLATE,
+    CANDY,
+    GUM
+};
+
+// Function to get the string representation of ItemType
+string getItemTypeString(ItemType type) {
+    switch (type) {
+        case ItemType::OREO: return "OREO";
+        case ItemType::JUICE: return "JUICE";
+        case ItemType::COKE: return "COKE";
+        case ItemType::SODA: return "SODA";
+        case ItemType::CHIPS: return "CHIPS";
+        case ItemType::CHOCOLATE: return "CHOCOLATE";
+        case ItemType::CANDY: return "CANDY";
+        case ItemType::GUM: return "GUM";
+        default: return "UNKNOWN";
+    }
+}
+
+// Item class
+class Item {
+private:
+    ItemType itemType;
+    int price;
+
+public:
+    ItemType getType() const {
+        return itemType;
+    }
+
+    void setItemType(ItemType itemType) {
+        this->itemType = itemType;
+    }
+
+    int getPrice() const {
+        return price;
+    }
+
+    void setPrice(int price) {
+        this->price = price;
+    }
+};
+
+// ItemShelf class
+class ItemShelf {
+private:
+    int itemCode;
+    Item item;
+    bool soldOut;
+
+public:
+    Item getItem() const {
+        return item;
+    }
+
+    void setItem(const Item& item) {
+        this->item = item;
+    }
+
+    int getItemCode() const {
+        return itemCode;
+    }
+
+    void setItemCode(int itemCode) {
+        this->itemCode = itemCode;
+    }
+
+    bool isSoldOut() const {
+        return soldOut;
+    }
+
+    void setSoldOut(bool soldOut) {
+        this->soldOut = soldOut;
+    }
+};
+
+// Inventory class
+class Inventory {
+private:
+    vector<ItemShelf> inventory;
+
+public:
+    Inventory(int n) {
+        inventory.resize(n);
+        initialEmptyInventory();
+    }
+
+    vector<ItemShelf>& getInventory() {
+        return inventory;
+    }
+
+    const vector<ItemShelf>& getInventory() const {
+        return inventory;
+    }
+
+    void setInventory(const vector<ItemShelf>& inventory) {
+        this->inventory = inventory;
+    }
+
+    void initialEmptyInventory() {
+        int startCode = 101;
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemShelf itemShelf;
+            itemShelf.setItemCode(startCode);
+            itemShelf.setSoldOut(true);
+            inventory[i] = itemShelf;
+            startCode++;
+        }
+    }
+
+    void addItem(const Item& item, int itemCode) {
+        for (auto& shelf : inventory) {
+            if (shelf.getItemCode() == itemCode) {
+                if (shelf.isSoldOut()) {
+                    shelf.setItem(item);
+                    shelf.setSoldOut(false);
+                }
+            }
+        }
+    }
+
+    Item getItem(int itemCode) const {
+        for (const auto& shelf : inventory) {
+            if (shelf.getItemCode() == itemCode) {
+                if (shelf.isSoldOut()) {
+                    cout << "Item is already sold out" << endl;
+                    return Item();
+                } else {
+                    return shelf.getItem();
+                }
+            }
+        }
+
+        cout << "Invalid item code" << endl;
+        return Item();
+    }
+
+    void updateSoldOutItem(int itemCodeNumber) {
+        for (auto& shelf : inventory) {
+            if (shelf.getItemCode() == itemCodeNumber) {
+                shelf.setSoldOut(true);
+            }
+        }
+    }
+};
+
+// VendingMachine class
+class VendingMachine;
+
+// VendingMachineState class
+class VendingMachineState {
+public:
+    VendingMachineState() {
+        cout << "Currently machine is in Idle state" << endl;
+    }
+
+    void clickOnStartProductSelectionButton() {
+        cout << "Vending machine is in HasMoneyState" << endl;
+    }
+
+    void insertCoin(VendingMachine& vendingMachine, Coin coin);
+
+    vector<Coin> refundFullMoney(VendingMachine& vendingMachine);
+
+    void updateInventory(VendingMachine& vendingMachine, const Item& item, int itemCodeNumber);
+
+    void dispenseProduct(VendingMachine& vendingMachine, int itemCodeNumber);
+
+    void chooseProduct(VendingMachine& vendingMachine, int itemCodeNumber);
+
+    void getChange(int itemPrice, int paidByUser) {
+        cout << "Returned the change in the Coin Dispense Tray: " << (paidByUser - itemPrice) << endl;
+    }
+};
+
+// VendingMachine class
+class VendingMachine {
+private:
+    VendingMachineState vendingMachineState;
+    Inventory inventory;
+    vector<Coin> coinList;
+
+public:
+    VendingMachine() : inventory(10) {
+        vendingMachineState = VendingMachineState();
+        coinList = vector<Coin>();
+    }
+
+    VendingMachineState& getVendingMachineState() {
+        return vendingMachineState;
+    }
+
+    const VendingMachineState& getVendingMachineState() const {
+        return vendingMachineState;
+    }
+
+    Inventory& getInventory() {
+        return inventory;
+    }
+
+    const Inventory& getInventory() const {
+        return inventory;
+    }
+
+    vector<Coin>& getCoinList() {
+        return coinList;
+    }
+
+    const vector<Coin>& getCoinList() const {
+        return coinList;
+    }
+
+    void setVendingMachineState(const VendingMachineState& state) {
+        vendingMachineState = state;
+    }
+
+    void setInventory(const Inventory& inv) {
+        inventory = inv;
+    }
+
+    void setCoinList(const vector<Coin>& coins) {
+        coinList = coins;
+    }
+};
+
+// Implementation of VendingMachineState methods that need VendingMachine
+void VendingMachineState::insertCoin(VendingMachine& vendingMachine, Coin coin) {
+    cout << "Vending machine is in HasMoneyState" << endl;
+    cout << "Accepted the coin" << endl;
+    vendingMachine.getCoinList().push_back(coin);
+}
+
+vector<Coin> VendingMachineState::refundFullMoney(VendingMachine& vendingMachine) {
+    cout << "Returned the full amount back in the coin dispense tray" << endl;
+    vendingMachine.setVendingMachineState(VendingMachineState());
+    return vendingMachine.getCoinList();
+}
+
+void VendingMachineState::dispenseProduct(VendingMachine& vendingMachine, int itemCodeNumber) {
+    cout << "Currently vending machine is in Dispense State" << endl;
+    cout << "Product has been dispensed" << endl;
+    vendingMachine.getInventory().updateSoldOutItem(itemCodeNumber);
+    vendingMachine.setVendingMachineState(VendingMachineState());
+}
+
+void VendingMachineState::chooseProduct(VendingMachine& vendingMachine, int itemCodeNumber) {
+    Item item = vendingMachine.getInventory().getItem(itemCodeNumber);
+
+    int paidByUser = 0;
+    for (Coin coin : vendingMachine.getCoinList()) {
+        paidByUser += static_cast<int>(coin);
+    }
+
+    if (item.getPrice() > paidByUser) {
+        refundFullMoney(vendingMachine);
+        return;
+    } else {
+        getChange(item.getPrice(), paidByUser);
+        dispenseProduct(vendingMachine, itemCodeNumber);
+        return;
+    }
+}
+
+// Main application
+void fillInventory(VendingMachine& vendingMachine);
+void displayInventory(const VendingMachine& vendingMachine);
+
+int main() {
+    VendingMachine vendingMachine;
+
+    cout << "Fill the inventory" << endl;
+    fillInventory(vendingMachine);
+
+    cout << "Display the Inventory" << endl;
+    displayInventory(vendingMachine);
+
+    VendingMachineState& vendingMachineState = vendingMachine.getVendingMachineState();
+
+    vendingMachineState.insertCoin(vendingMachine, Coin::FIFTY);
+    vendingMachineState.insertCoin(vendingMachine, Coin::TWENTY);
+
+    vendingMachineState.chooseProduct(vendingMachine, 102);
+
+    displayInventory(vendingMachine);
+
+    return 0;
+}
+
+void fillInventory(VendingMachine& vendingMachine) {
+    vector<ItemShelf>& itemShelfSlots = vendingMachine.getInventory().getInventory();
+    for (int i = 0; i < itemShelfSlots.size(); i++) {
+        Item item;
+        if (i == 0 || i == 8) {
+            item.setItemType(ItemType::OREO);
+            item.setPrice(30);
+        } else if (i == 1 || i == 9) {
+            item.setItemType(ItemType::JUICE);
+            item.setPrice(40);
+        } else if (i == 2) {
+            item.setItemType(ItemType::COKE);
+            item.setPrice(45);
+        } else if (i == 3) {
+            item.setItemType(ItemType::SODA);
+            item.setPrice(20);
+        } else if (i == 4) {
+            item.setItemType(ItemType::CHIPS);
+            item.setPrice(20);
+        } else if (i == 5) {
+            item.setItemType(ItemType::CHOCOLATE);
+            item.setPrice(60);
+        } else if (i == 6) {
+            item.setItemType(ItemType::CANDY);
+            item.setPrice(5);
+        } else if (i == 7) {
+            item.setItemType(ItemType::GUM);
+            item.setPrice(5);
+        }
+        itemShelfSlots[i].setItem(item);
+        itemShelfSlots[i].setSoldOut(false);
+    }
+}
+
+void displayInventory(const VendingMachine& vendingMachine) {
+    const vector<ItemShelf>& itemShelfSlots = vendingMachine.getInventory().getInventory();
+    for (const auto& shelf : itemShelfSlots) {
+        cout << "Item Code: " << shelf.getItemCode()
+             << " Item: " << getItemTypeString(shelf.getItem().getType())
+             << " Price: " << shelf.getItem().getPrice()
+             << " isAvailable: " << !shelf.isSoldOut() << endl;
+    }
+}
