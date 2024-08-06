@@ -1,0 +1,407 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+// Enum for TransactionType
+class TransactionType {
+public:
+    enum Value {
+        CREDIT,
+        DEBIT,
+        FAILED
+    };
+
+private:
+    Value type;
+    string val;
+
+    TransactionType(Value type, const string& val) : type(type), val(val) {}
+
+public:
+    static TransactionType Credit() { return TransactionType(CREDIT, "Credit"); }
+    static TransactionType Debit() { return TransactionType(DEBIT, "Debit"); }
+    static TransactionType Failed() { return TransactionType(FAILED, "Failed"); }
+
+    string getVal() const {
+        return val;
+    }
+
+    Value getType() const {
+        return type;
+    }
+};
+
+// Enum for Verdict
+class Verdict {
+public:
+    enum Value {
+        SUCCESS,
+        FAILURE,
+        OUT_OF_MONEY,
+        SOFTWARE_ERROR,
+        HARDWARE_ERROR,
+        MAX_LIMIT
+    };
+
+private:
+    Value value;
+    string val;
+
+    Verdict(Value value, const string& val) : value(value), val(val) {}
+
+public:
+    static Verdict Success() { return Verdict(SUCCESS, "Success"); }
+    static Verdict Failure() { return Verdict(FAILURE, "Failure"); }
+    static Verdict OutOfMoney() { return Verdict(OUT_OF_MONEY, "Out of Money"); }
+    static Verdict SoftwareError() { return Verdict(SOFTWARE_ERROR, "Software Error"); }
+    static Verdict HardwareError() { return Verdict(HARDWARE_ERROR, "Hardware Error"); }
+    static Verdict MaxLimit() { return Verdict(MAX_LIMIT, "Exceed maximum withdraw limit"); }
+
+    string getVal() const {
+        return val;
+    }
+
+    Value getValue() const {
+        return value;
+    }
+};
+
+// Location class
+class Location {
+private:
+    string locationName;
+
+public:
+    Location(const string& name) : locationName(name) {}
+
+    string getLocationName() const {
+        return locationName;
+    }
+};
+
+// CurrencyComposition class
+class CurrencyComposition {
+private:
+    int fiveHundredNotes;
+    int twoHundredNotes;
+    int oneHundredNotes;
+    int fiftyNotes;
+    int tenNotes;
+
+public:
+    CurrencyComposition(int fiveHundredNotes, int twoHundredNotes, int oneHundredNotes, int fiftyNotes, int tenNotes)
+        : fiveHundredNotes(fiveHundredNotes), twoHundredNotes(twoHundredNotes), oneHundredNotes(oneHundredNotes),
+          fiftyNotes(fiftyNotes), tenNotes(tenNotes) {}
+
+    int getFiveHunderedNote() const {
+        return fiveHundredNotes;
+    }
+
+    int getTwoHunderedNote() const {
+        return twoHundredNotes;
+    }
+
+    int getOneHunderedNote() const {
+        return oneHundredNotes;
+    }
+
+    int getFiftyNote() const {
+        return fiftyNotes;
+    }
+
+    int getTenNote() const {
+        return tenNotes;
+    }
+
+    void setFiveHundredNotes(int count) {
+        fiveHundredNotes = count;
+    }
+
+    void setTwoHundredNotes(int count) {
+        twoHundredNotes = count;
+    }
+
+    void setOneHundredNotes(int count) {
+        oneHundredNotes = count;
+    }
+
+    void setFiftyNotes(int count) {
+        fiftyNotes = count;
+    }
+
+    void setTenNotes(int count) {
+        tenNotes = count;
+    }
+};
+
+// Transaction class
+class Transaction {
+private:
+    long transactionId;
+    time_t dateOfTransaction;
+    int transactionAmount;
+    Verdict verdict;
+    TransactionType transactionType;
+    Location location;
+
+public:
+    Transaction(long transactionId, time_t dateOfTransaction, int transactionAmount,
+                Verdict verdict, TransactionType transactionType, const Location& location)
+        : transactionId(transactionId), dateOfTransaction(dateOfTransaction), transactionAmount(transactionAmount),
+          verdict(verdict), transactionType(transactionType), location(location) {}
+
+    long getTransactionId() const {
+        return transactionId;
+    }
+
+    time_t getDateOfTransaction() const {
+        return dateOfTransaction;
+    }
+
+    int getTransactionAmount() const {
+        return transactionAmount;
+    }
+
+    Verdict getVerdict() const {
+        return verdict;
+    }
+
+    TransactionType getTransactionType() const {
+        return transactionType;
+    }
+
+    Location getLocation() const {
+        return location;
+    }
+};
+
+// User class
+class User {
+private:
+    string userName;
+    int pin;
+    string accountNumber;
+    int cvv;
+    double balance;
+    int monthOfExpiry;
+    int yearOfExpiry;
+
+public:
+    User(const string& userName, int pin, const string& accountNumber, int cvv, double balance, int monthOfExpiry, int yearOfExpiry)
+        : userName(userName), pin(pin), accountNumber(accountNumber), cvv(cvv), balance(balance), monthOfExpiry(monthOfExpiry), yearOfExpiry(yearOfExpiry) {}
+
+    string getUserName() const {
+        return userName;
+    }
+
+    int getPin() const {
+        return pin;
+    }
+
+    string getAccountNumber() const {
+        return accountNumber;
+    }
+
+    int getCvv() const {
+        return cvv;
+    }
+
+    int getMonthOfExpiry() const {
+        return monthOfExpiry;
+    }
+
+    int getYearOfExpiry() const {
+        return yearOfExpiry;
+    }
+
+    double getBalance() const {
+        return balance;
+    }
+
+    void setUserName(const string& newUserName) {
+        userName = newUserName;
+    }
+
+    void setPin(int newPin) {
+        pin = newPin;
+    }
+
+    void setAccountNumber(const string& newAccountNumber) {
+        accountNumber = newAccountNumber;
+    }
+
+    void setCvv(int newCvv) {
+        cvv = newCvv;
+    }
+
+    void setMonthOfExpiry(int newMonthOfExpiry) {
+        monthOfExpiry = newMonthOfExpiry;
+    }
+
+    void setYearOfExpiry(int newYearOfExpiry) {
+        yearOfExpiry = newYearOfExpiry;
+    }
+
+    void setBalance(double newBalance) {
+        balance = newBalance;
+    }
+};
+
+
+// ATM class with reference returning
+class ATM {
+private:
+    string id;
+    Location location;
+    CurrencyComposition currencyComposition;
+    vector<Transaction> transactions;
+
+public:
+    ATM(const string& id, const Location& location, const CurrencyComposition& composition)
+        : id(id), location(location), currencyComposition(composition) {}
+
+    string getId() const {
+        return id;
+    }
+
+    Location getLocation() const {
+        return location;
+    }
+
+    CurrencyComposition& getCurrencyComposition() {
+        return currencyComposition;
+    }
+
+    const CurrencyComposition& getCurrencyComposition() const {
+        return currencyComposition;
+    }
+
+    vector<Transaction>& getTransactions() {
+        return transactions;
+    }
+
+    void setLocation(const Location& newLocation) {
+        location = newLocation;
+    }
+
+    void setCurrencyComposition(const CurrencyComposition& newComposition) {
+        currencyComposition = newComposition;
+    }
+};
+
+
+
+// MachineFeatures class
+class MachineFeatures {
+public:
+    ATM createATM(const Location& location, const CurrencyComposition& composition) {
+        return ATM("ASWER123", location, composition);
+    }
+
+    void updateATMLocation(ATM& atm, const Location& location) {
+        atm.setLocation(location);
+    }
+
+    void updateATMComposition(ATM& atm, const CurrencyComposition& composition) {
+        atm.setCurrencyComposition(composition);
+    }
+
+    void seeComposition(const CurrencyComposition& composition) {
+        cout << "ATM Composition is: " << endl;
+        cout << "_________________________________________" << endl;
+        cout << "1. 500 notes: " << composition.getFiveHunderedNote() << endl;
+        cout << "2. 200 notes: " << composition.getTwoHunderedNote() << endl;
+        cout << "3. 100 notes: " << composition.getOneHunderedNote() << endl;
+        cout << "4. 50 notes: " << composition.getFiftyNote() << endl;
+        cout << "5. 10 notes: " << composition.getTenNote() << endl;
+        cout << "____________________________________________" << endl;
+    }
+
+    void checkUserBalance(const User& user) {
+        cout << "Your balance is: " << user.getBalance() << endl;
+    }
+
+    void withdraw(int amount, User& user, ATM& atm) {
+        if (amount > user.getBalance()) {
+            Transaction transaction(12334L, time(nullptr), amount, Verdict::Failure(), TransactionType::Failed(), atm.getLocation());
+            atm.getTransactions().push_back(transaction);
+            cout << "Insufficient Funds" << endl;
+            return;
+        }
+
+        int totalAvailableFunds = atm.getCurrencyComposition().getFiveHunderedNote() * 500 + 
+                                  atm.getCurrencyComposition().getTwoHunderedNote() * 200 + 
+                                  atm.getCurrencyComposition().getOneHunderedNote() * 100 + 
+                                  atm.getCurrencyComposition().getFiftyNote() * 50 + 
+                                  atm.getCurrencyComposition().getTenNote() * 10;
+
+        if (amount > totalAvailableFunds) {
+            Transaction transaction(12335L, time(nullptr), amount, Verdict::OutOfMoney(), TransactionType::Failed(), atm.getLocation());
+            atm.getTransactions().push_back(transaction);
+            cout << "Sorry! We are out of Funds" << endl;
+            return;
+        }
+
+        Transaction transaction(12336L, time(nullptr), amount, Verdict::Success(), TransactionType::Debit(), atm.getLocation());
+        atm.getTransactions().push_back(transaction);
+
+        updateCompositionNotes(atm, amount);
+        cout << "Account is debited with " << amount << endl;
+        user.setBalance(user.getBalance() - amount);
+        checkUserBalance(user);
+    }
+
+private:
+    void updateCompositionNotes(ATM& atm, int amount) {
+        CurrencyComposition& composition = atm.getCurrencyComposition();
+        int fiveHundredNotes = amount / 500;
+        if (composition.getFiveHunderedNote() >= fiveHundredNotes) {
+            amount -= fiveHundredNotes * 500;
+            composition.setFiveHundredNotes(composition.getFiveHunderedNote() - fiveHundredNotes);
+        }
+
+        int twoHundredNotes = amount / 200;
+        if (composition.getTwoHunderedNote() >= twoHundredNotes) {
+            amount -= twoHundredNotes * 200;
+            composition.setTwoHundredNotes(composition.getTwoHunderedNote() - twoHundredNotes);
+        }
+
+        int oneHundredNotes = amount / 100;
+        if (composition.getOneHunderedNote() >= oneHundredNotes) {
+            amount -= oneHundredNotes * 100;
+            composition.setOneHundredNotes(composition.getOneHunderedNote() - oneHundredNotes);
+        }
+
+        int fiftyNotes = amount / 50;
+        if (composition.getFiftyNote() >= fiftyNotes) {
+            amount -= fiftyNotes * 50;
+            composition.setFiftyNotes(composition.getFiftyNote() - fiftyNotes);
+        }
+
+        int tenNotes = amount / 10;
+        if (composition.getTenNote() >= tenNotes) {
+            amount -= tenNotes * 10;
+            composition.setTenNotes(composition.getTenNote() - tenNotes);
+        }
+
+        updateATMComposition(atm, composition);
+        seeComposition(composition);
+    }
+};
+
+// Main function
+int main() {
+    Location loc("Main Street");
+    CurrencyComposition composition(10, 20, 30, 40, 50);
+    User user("JohnDoe", 1234, "123456789012", 567, 1000.00, 12, 2025);
+    MachineFeatures machineFeatures;
+
+    ATM atm = machineFeatures.createATM(loc, composition);
+    machineFeatures.checkUserBalance(user);
+    machineFeatures.withdraw(500, user, atm);
+
+    return 0;
+}
